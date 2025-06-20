@@ -1,6 +1,6 @@
 name: website
 description: My personal website
 runtime:
-    name: go
-    options:
-        binary: ./build/infra
+  name: go
+  options:
+    binary: ./build/infra
