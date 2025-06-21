@@ -42,18 +42,6 @@ func main() {
 			return err
 		}
 
-		_, err = ec2.NewInternetGatewayAttachment(
-			ctx,
-			"website-igw-attachment",
-			&ec2.InternetGatewayAttachmentArgs{
-				VpcId:             websiteVPC.ID(),
-				InternetGatewayId: websiteIGW.ID(),
-			},
-		)
-		if err != nil {
-			return err
-		}
-
 		websiteRT, err := ec2.NewRouteTable(
 			ctx,
 			"website-rt",
@@ -61,8 +49,12 @@ func main() {
 				VpcId: websiteVPC.ID(),
 				Routes: ec2.RouteTableRouteArray{
 					&ec2.RouteTableRouteArgs{
-						CidrBlock: websiteVPCPublicSubnet.CidrBlock,
+						CidrBlock: pulumi.String("0.0.0.0/0"),
 						GatewayId: websiteIGW.ID(),
+					},
+					&ec2.RouteTableRouteArgs{
+						Ipv6CidrBlock: pulumi.String("::0/0"),
+						GatewayId:     websiteIGW.ID(),
 					},
 				},
 			},
@@ -79,6 +71,8 @@ func main() {
 				SubnetId:     websiteVPCPublicSubnet.ID(),
 			},
 		)
+
+		ctx.Export("websiteVPC", websiteVPC.ID())
 
 		return nil
 	})
