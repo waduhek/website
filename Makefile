@@ -29,3 +29,11 @@ format:
 .PHONY: build-infra
 build-infra:
 	go build -o ./build/infra ./cmd/infra
+
+.PHONY: preview-infra
+preview-infra: build-infra
+	pulumi preview
+
+.PHONY: apply-infra
+apply-infra: build-infra
+	pulumi up
