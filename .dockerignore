@@ -1,0 +1,19 @@
+# Git directory
+.git
+
+# Github directory
+.github
+
+# Build directory
+build
+
+# Environment variables
+.env
+sample.env
+
+# Migrations directory
+migrations
+
+# Pulumi files
+Pulumi.yaml
+Pulumi.*.yaml

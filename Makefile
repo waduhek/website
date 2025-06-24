@@ -37,3 +37,13 @@ preview-infra: build-infra
 .PHONY: apply-infra
 apply-infra: build-infra
 	pulumi up
+
+# NOTE: Intended to be used only for local development
+.PHONY: build-docker
+build-docker:
+	docker build --tag website:latest .
+
+# NOTE: Intended to be used only for local development
+.PHONY: run-docker
+run-docker:
+	docker run --env-file .env --publish 8080:8080 --rm website:latest

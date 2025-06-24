@@ -2,7 +2,7 @@ module github.com/waduhek/website
 
 go 1.23.0
 
-toolchain go1.24.3
+toolchain go1.24.4
 
 require (
 	github.com/jackc/pgx/v5 v5.7.5
