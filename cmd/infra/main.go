@@ -90,6 +90,36 @@ func main() {
 
 		_, err = vpc.NewSecurityGroupIngressRule(
 			ctx,
+			"ingress-allow-ipv4-http",
+			&vpc.SecurityGroupIngressRuleArgs{
+				SecurityGroupId: websiteSecGroup.ID(),
+				CidrIpv4:        pulumi.String("0.0.0.0/0"),
+				IpProtocol:      pulumi.String("tcp"),
+				FromPort:        pulumi.Int(80),
+				ToPort:          pulumi.Int(80),
+			},
+		)
+		if err != nil {
+			return err
+		}
+
+		_, err = vpc.NewSecurityGroupIngressRule(
+			ctx,
+			"ingress-allow-ipv6-http",
+			&vpc.SecurityGroupIngressRuleArgs{
+				SecurityGroupId: websiteSecGroup.ID(),
+				CidrIpv6:        pulumi.String("::0/0"),
+				IpProtocol:      pulumi.String("tcp"),
+				FromPort:        pulumi.Int(80),
+				ToPort:          pulumi.Int(80),
+			},
+		)
+		if err != nil {
+			return err
+		}
+
+		_, err = vpc.NewSecurityGroupIngressRule(
+			ctx,
 			"ingress-allow-ipv4-https",
 			&vpc.SecurityGroupIngressRuleArgs{
 				SecurityGroupId: websiteSecGroup.ID(),
