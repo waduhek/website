@@ -46,4 +46,12 @@ build-docker:
 # NOTE: Intended to be used only for local development
 .PHONY: run-docker
 run-docker:
-	docker run --env-file .env --publish 8080:8080 --rm website:latest
+	docker run --env-file .env --publish 8080:8080 --rm --network website --name website-server website:latest
+
+.PHONY: build-nginx
+build-nginx:
+	docker build --tag website/nginx:latest ./nginx
+
+.PHONY: run-nginx
+run-nginx:
+	docker run --publish 80:80 --rm --network website website/nginx:latest
