@@ -6,6 +6,7 @@ import "github.com/waduhek/website/internal/templates"
 // template. Use this while building [templates.TemplateService].
 var TemplateNameFileMap = map[templates.TemplateName]string{
 	templates.Header:     "templates/common/header.html.tmpl",
+	templates.Footer:     "templates/common/footer.html.tmpl",
 	templates.Home:       "templates/home.html.tmpl",
 	templates.Experience: "templates/experience.html.tmpl",
 }
