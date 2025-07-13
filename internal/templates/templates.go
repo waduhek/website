@@ -12,6 +12,7 @@ const (
 	Footer     TemplateName = "footer"     // Footer is the footer used in all templates.
 	Home       TemplateName = "home"       // Home is the template for the home page.
 	Experience TemplateName = "experience" // Experience is the template for experience section.
+	Education  TemplateName = "education"  // Education is the template for education section.
 )
 
 // TemplateService is a storage container for all the templates registered.
