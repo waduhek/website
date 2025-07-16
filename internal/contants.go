@@ -9,4 +9,5 @@ var TemplateNameFileMap = map[templates.TemplateName]string{
 	templates.Footer:     "templates/common/footer.html.tmpl",
 	templates.Home:       "templates/home.html.tmpl",
 	templates.Experience: "templates/experience.html.tmpl",
+	templates.Education:  "templates/education.html.tmpl",
 }

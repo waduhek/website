@@ -7,6 +7,7 @@ import (
 	"syscall"
 
 	"github.com/waduhek/website/internal"
+	eduHandler "github.com/waduhek/website/internal/education/handler"
 	expHandler "github.com/waduhek/website/internal/experience/handler"
 	homeHandler "github.com/waduhek/website/internal/home/handler"
 )
@@ -39,6 +40,9 @@ func main() {
 
 	expHandler := expHandler.NewExperienceHandler(dependencies)
 	mux.Handle("GET /experience", expHandler)
+
+	eduHandler := eduHandler.NewEducationHandler(dependencies)
+	mux.Handle("GET /education", eduHandler)
 
 	homeHandler := homeHandler.NewHomeHandler(dependencies)
 	mux.Handle("GET /{$}", homeHandler)

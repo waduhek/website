@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/waduhek/website/internal/database"
+	eduRepo "github.com/waduhek/website/internal/education/repository"
 	experienceRepository "github.com/waduhek/website/internal/experience/repository"
 	"github.com/waduhek/website/internal/logger"
 	"github.com/waduhek/website/internal/templates"
@@ -16,6 +17,7 @@ type Dependencies struct {
 	Logger               logger.Logger
 	DbConn               database.Connection
 	ExperienceRepository experienceRepository.ExperienceRepository
+	EducationRepository  eduRepo.EducationRepository
 	TemplateService      *templates.TemplateService
 }
 
@@ -27,6 +29,7 @@ func BuildDependencies(templateNamePathMap map[string]string) *Dependencies {
 		logger.Error("error while connecting to the database", "err", err)
 		os.Exit(1)
 	}
+	eduRepo := eduRepo.NewEducationRepository(dbConn, logger)
 	expRepo := experienceRepository.NewExperienceRepository(dbConn, logger)
 	templateService, err := templates.NewTemplateService(templateNamePathMap)
 	if err != nil {
@@ -37,6 +40,7 @@ func BuildDependencies(templateNamePathMap map[string]string) *Dependencies {
 	return &Dependencies{
 		Logger:               logger,
 		DbConn:               dbConn,
+		EducationRepository:  eduRepo,
 		ExperienceRepository: expRepo,
 		TemplateService:      templateService,
 	}

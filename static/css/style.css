@@ -43,3 +43,9 @@ footer ul li {
 footer li:not(:first-child):before {
     content: " | ";
 }
+
+.section {
+    background-color: rgba(204, 209, 209, 0.40);
+    margin: 10px 0;
+    padding: 0 5px;
+}
