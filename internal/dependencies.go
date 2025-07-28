@@ -8,6 +8,7 @@ import (
 	eduRepo "github.com/waduhek/website/internal/education/repository"
 	experienceRepository "github.com/waduhek/website/internal/experience/repository"
 	"github.com/waduhek/website/internal/logger"
+	projRepo "github.com/waduhek/website/internal/projects/repository"
 	"github.com/waduhek/website/internal/templates"
 )
 
@@ -18,6 +19,7 @@ type Dependencies struct {
 	DbConn               database.Connection
 	ExperienceRepository experienceRepository.ExperienceRepository
 	EducationRepository  eduRepo.EducationRepository
+	ProjectsRepository   projRepo.ProjectsRepository
 	TemplateService      *templates.TemplateService
 }
 
@@ -31,6 +33,7 @@ func BuildDependencies(templateNamePathMap map[string]string) *Dependencies {
 	}
 	eduRepo := eduRepo.NewEducationRepository(dbConn, logger)
 	expRepo := experienceRepository.NewExperienceRepository(dbConn, logger)
+	projRepo := projRepo.NewProjectsRepository(dbConn, logger)
 	templateService, err := templates.NewTemplateService(templateNamePathMap)
 	if err != nil {
 		logger.Error("error while building template service", "err", err)
@@ -42,6 +45,7 @@ func BuildDependencies(templateNamePathMap map[string]string) *Dependencies {
 		DbConn:               dbConn,
 		EducationRepository:  eduRepo,
 		ExperienceRepository: expRepo,
+		ProjectsRepository:   projRepo,
 		TemplateService:      templateService,
 	}
 }
