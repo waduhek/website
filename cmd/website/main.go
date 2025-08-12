@@ -10,6 +10,7 @@ import (
 	eduHandler "github.com/waduhek/website/internal/education/handler"
 	expHandler "github.com/waduhek/website/internal/experience/handler"
 	homeHandler "github.com/waduhek/website/internal/home/handler"
+	projHandler "github.com/waduhek/website/internal/projects/handler"
 )
 
 func main() {
@@ -43,6 +44,9 @@ func main() {
 
 	eduHandler := eduHandler.NewEducationHandler(dependencies)
 	mux.Handle("GET /education", eduHandler)
+
+	projHandler := projHandler.NewProjectsHandler(dependencies)
+	mux.Handle("GET /projects", projHandler)
 
 	homeHandler := homeHandler.NewHomeHandler(dependencies)
 	mux.Handle("GET /{$}", homeHandler)
