@@ -13,6 +13,7 @@ const (
 	Home       TemplateName = "home"       // Home is the template for the home page.
 	Experience TemplateName = "experience" // Experience is the template for experience section.
 	Education  TemplateName = "education"  // Education is the template for education section.
+	Projects   TemplateName = "projects"   // Projects is the template for projects section.
 )
 
 // TemplateService is a storage container for all the templates registered.
