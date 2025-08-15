@@ -1,5 +1,15 @@
-header h2 {
+.header-list {
     border-bottom: 2px solid black;
+    list-style-type: none;
+    display: flex;
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+}
+
+.no-gaps {
+    margin: 0;
+    padding: 0;
 }
 
 a.unstyle {
@@ -13,19 +23,15 @@ a.unstyle {
     max-width: 920px;
 }
 
-nav {
-  border-bottom: 1px solid black;
-}
-
-nav ul {
+.nav-list {
     list-style-type: none;
     padding-left: 0;
 }
 
-nav>ul>li {
+.nav-list>li {
     display: inline-block;
     padding: 5px;
-    background: gray;
+    background: #e0e0e0;
     border: 5px rounded;
 }
 
