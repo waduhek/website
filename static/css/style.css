@@ -1,3 +1,7 @@
+html {
+    font-family: sans-serif;
+}
+
 .header-list {
     border-bottom: 2px solid black;
     list-style-type: none;
