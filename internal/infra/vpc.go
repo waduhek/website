@@ -1,6 +1,8 @@
 package infra
 
 import (
+	"net"
+
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
@@ -50,9 +52,11 @@ func createPublicSubnet(
 		ctx,
 		"website-vpc-public-1",
 		&ec2.SubnetArgs{
-			VpcId:            vpc.ID(),
-			CidrBlock:        pulumi.String("10.0.0.0/20"),
-			AvailabilityZone: pulumi.String("ap-south-1a"),
+			VpcId:                       vpc.ID(),
+			CidrBlock:                   pulumi.String("10.0.0.0/20"),
+			Ipv6CidrBlock:               getPublicSubnetIPv6(vpc.Ipv6CidrBlock),
+			AssignIpv6AddressOnCreation: pulumi.Bool(true),
+			AvailabilityZone:            pulumi.String("ap-south-1a"),
 		},
 	)
 }
@@ -109,4 +113,13 @@ func associateRouteTableToSubnet(
 	)
 
 	return err
+}
+
+func getPublicSubnetIPv6(vpcIPv6Block pulumi.StringOutput) pulumi.StringOutput {
+	return vpcIPv6Block.ApplyT(func(block string) string {
+		_, ipNet, _ := net.ParseCIDR(block)
+		ipNet.Mask = net.CIDRMask(64, 128)
+
+		return ipNet.String()
+	}).(pulumi.StringOutput)
 }

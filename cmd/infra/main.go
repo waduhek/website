@@ -29,6 +29,7 @@ func main() {
 
 		ctx.Export("websiteVPC", websiteVPC.ID())
 		ctx.Export("websitePublicIP", websiteInstance.PublicIp)
+		ctx.Export("websiteIPv6", websiteInstance.Ipv6Addresses)
 
 		return nil
 	})
