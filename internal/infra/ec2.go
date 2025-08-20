@@ -44,6 +44,7 @@ func createInstance(
 			InstanceType:             ec2.InstanceType_T2_Micro,
 			SubnetId:                 subnet.ID(),
 			AssociatePublicIpAddress: pulumi.Bool(true),
+			Ipv6AddressCount:         pulumi.Int(1),
 			VpcSecurityGroupIds: pulumi.StringArray{
 				sg.ID(),
 			},
