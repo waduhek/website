@@ -6,7 +6,7 @@ toolchain go1.24.4
 
 require (
 	github.com/jackc/pgx/v5 v5.7.5
-	github.com/pashagolub/pgxmock/v4 v4.7.0
+	github.com/pashagolub/pgxmock/v4 v4.8.0
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.37.1
 	github.com/pulumi/pulumi/sdk/v3 v3.117.0
 )
