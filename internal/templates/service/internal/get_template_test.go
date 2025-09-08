@@ -1,4 +1,4 @@
-package templates_test
+package tplsvcint_test
 
 import (
 	"fmt"
@@ -7,6 +7,8 @@ import (
 	"testing"
 
 	"github.com/waduhek/website/internal/templates"
+	tplsvc "github.com/waduhek/website/internal/templates/service"
+	tplsvcint "github.com/waduhek/website/internal/templates/service/internal"
 )
 
 const templateFileName string = "temp-template.txt.tmpl"
@@ -33,7 +35,7 @@ func TestTemplateParseError(t *testing.T) {
 	tempDir := t.TempDir()
 	nonExistentTemplate := path.Join(tempDir, templateFileName)
 
-	_, err := templates.NewTemplateService(map[templates.TemplateName]string{
+	_, err := tplsvc.NewTemplateService(map[templates.TemplateName]string{
 		templates.Home: nonExistentTemplate,
 	})
 	if err == nil {
@@ -41,7 +43,7 @@ func TestTemplateParseError(t *testing.T) {
 	}
 }
 
-func setup(t *testing.T) *templates.TemplateService {
+func setup(t *testing.T) *tplsvcint.TemplateServiceImpl {
 	tempDir := t.TempDir()
 	pathToTemplate := path.Join(tempDir, templateFileName)
 
@@ -52,7 +54,7 @@ func setup(t *testing.T) *templates.TemplateService {
 
 	fmt.Fprint(file, "{{.Text}}")
 
-	templateService, err := templates.NewTemplateService(
+	templateService, err := tplsvcint.NewTemplateServiceImpl(
 		map[templates.TemplateName]string{
 			templates.Home: pathToTemplate,
 		},

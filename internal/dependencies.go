@@ -9,7 +9,7 @@ import (
 	experienceRepository "github.com/waduhek/website/internal/experience/repository"
 	"github.com/waduhek/website/internal/logger"
 	projRepo "github.com/waduhek/website/internal/projects/repository"
-	"github.com/waduhek/website/internal/templates"
+	tplsvc "github.com/waduhek/website/internal/templates/service"
 )
 
 // Dependencies is a structure that is used to store all the dependencies that
@@ -20,7 +20,7 @@ type Dependencies struct {
 	ExperienceRepository experienceRepository.ExperienceRepository
 	EducationRepository  eduRepo.EducationRepository
 	ProjectsRepository   projRepo.ProjectsRepository
-	TemplateService      *templates.TemplateService
+	TemplateService      tplsvc.TemplateService
 }
 
 // BuildDependencies builds all the dependencies of the service.
@@ -34,7 +34,7 @@ func BuildDependencies(templateNamePathMap map[string]string) *Dependencies {
 	eduRepo := eduRepo.NewEducationRepository(dbConn, logger)
 	expRepo := experienceRepository.NewExperienceRepository(dbConn, logger)
 	projRepo := projRepo.NewProjectsRepository(dbConn, logger)
-	templateService, err := templates.NewTemplateService(templateNamePathMap)
+	templateService, err := tplsvc.NewTemplateService(templateNamePathMap)
 	if err != nil {
 		logger.Error("error while building template service", "err", err)
 		os.Exit(1)
