@@ -1,9 +1,9 @@
-FROM golang:1.25.2 AS builder
+FROM golang:1.25.3 AS builder
 WORKDIR /app
 COPY . .
 RUN make build
 
-FROM golang:1.25.2 AS runner
+FROM golang:1.25.3 AS runner
 WORKDIR /app
 COPY --from=builder /app/templates ./templates
 COPY --from=builder /app/static ./static
