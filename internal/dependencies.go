@@ -4,19 +4,24 @@ import (
 	"context"
 	"os"
 
+	"go.opentelemetry.io/contrib/bridges/otelslog"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/metric"
+
 	"github.com/waduhek/website/internal/database"
 	eduRepo "github.com/waduhek/website/internal/education/repository"
 	experienceRepository "github.com/waduhek/website/internal/experience/repository"
-	"github.com/waduhek/website/internal/logger"
 	projRepo "github.com/waduhek/website/internal/projects/repository"
+	"github.com/waduhek/website/internal/telemetry"
 	tplsvc "github.com/waduhek/website/internal/templates/service"
 )
 
 // Dependencies is a structure that is used to store all the dependencies that
 // may be required.
 type Dependencies struct {
-	Logger               logger.Logger
+	Logger               telemetry.Logger
 	DbConn               database.Connection
+	Meter                metric.Meter
 	ExperienceRepository experienceRepository.ExperienceRepository
 	EducationRepository  eduRepo.EducationRepository
 	ProjectsRepository   projRepo.ProjectsRepository
@@ -25,7 +30,8 @@ type Dependencies struct {
 
 // BuildDependencies builds all the dependencies of the service.
 func BuildDependencies(templateNamePathMap map[string]string) *Dependencies {
-	logger := logger.NewLogger()
+	logger := otelslog.NewLogger(telemetry.PackageName)
+	meter := otel.Meter(telemetry.PackageName)
 	dbConn, err := database.Connect(context.Background())
 	if err != nil {
 		logger.Error("error while connecting to the database", "err", err)
@@ -43,6 +49,7 @@ func BuildDependencies(templateNamePathMap map[string]string) *Dependencies {
 	return &Dependencies{
 		Logger:               logger,
 		DbConn:               dbConn,
+		Meter:                meter,
 		EducationRepository:  eduRepo,
 		ExperienceRepository: expRepo,
 		ProjectsRepository:   projRepo,
