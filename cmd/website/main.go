@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
+	"os"
 	"os/signal"
 	"syscall"
 
@@ -11,6 +13,7 @@ import (
 	expHandler "github.com/waduhek/website/internal/experience/handler"
 	homeHandler "github.com/waduhek/website/internal/home/handler"
 	projHandler "github.com/waduhek/website/internal/projects/handler"
+	"github.com/waduhek/website/internal/telemetry"
 )
 
 func main() {
@@ -19,6 +22,12 @@ func main() {
 		syscall.SIGINT, syscall.SIGHUP,
 	)
 	defer cancel()
+
+	shutdownOTel, err := telemetry.SetupOTelSDK(context.Background())
+	if err != nil {
+		slog.Error("error while setting up otel sdk", "error", err)
+		os.Exit(1)
+	}
 
 	dependencies := internal.BuildDependencies(internal.TemplateNameFileMap)
 
@@ -64,4 +73,5 @@ func main() {
 
 	server.Shutdown(context.Background())
 	dependencies.DbConn.Close()
+	shutdownOTel(context.Background())
 }

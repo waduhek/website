@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"github.com/waduhek/website/internal/logger"
+	"github.com/waduhek/website/internal/telemetry"
 	tplsvc "github.com/waduhek/website/internal/templates/service"
 )
 
 type HomeHandler struct {
-	logger          logger.Logger
+	logger          telemetry.Logger
 	templateService tplsvc.TemplateService
 }
