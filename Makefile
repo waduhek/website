@@ -55,3 +55,7 @@ build-nginx:
 .PHONY: run-nginx
 run-nginx:
 	docker run --publish 80:80 --rm --network website website/nginx:latest
+
+.PHONY: build-otelcol
+build-otelcol:
+	docker build --tag website-otelcol:latest ./otelcol
