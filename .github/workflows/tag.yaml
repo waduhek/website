@@ -74,3 +74,39 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/website/nginx:${{ steps.version.outputs.tag }}
             ghcr.io/${{ github.repository_owner }}/website/nginx:latest
+
+  push-otelcol-image:
+    name: Push OTel collector image to GHCR
+    runs-on: ubuntu-latest
+
+    if: ${{ startsWith(github.event.release.tag_name, 'otelcol/') }}
+
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get tag version
+        id: version
+        run: |
+          tag=$(echo ${{ github.event.release.tag_name }} | cut -d / -f 2)
+          echo "tag=$tag" >> $GITHUB_OUTPUT
+
+      - name: Build and tag OTel collector image
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          context: ./otelcol
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/website/otelcol:${{ steps.version.outputs.tag }}
+            ghcr.io/${{ github.repository_owner }}/website/otelcol:latest
