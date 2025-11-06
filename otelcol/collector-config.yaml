@@ -1,0 +1,74 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  postgresql:
+    username: ${env:OTELCOL_POSTGRES_USERNAME}
+    password: ${env:OTELCOL_POSTGRES_PASSWORD}
+    endpoint: ${env:OTELCOL_POSTGRES_ENDPOINT}
+    databases:
+      - website
+    tls:
+      insecure: true
+
+exporters:
+  awsxray:
+    region: ap-south-1
+    aws_log_groups:
+      - website-logs
+
+  awsemf:
+    region: ap-south-1
+    log_group_name: website-logs
+    log_stream_name: website-log-stream
+
+  awscloudwatchlogs:
+    region: ap-south-1
+    log_group_name: website-logs
+    log_stream_name: website-log-stream
+
+extensions:
+  sigv4auth/logs:
+    region: ap-south-1
+    service: logs
+
+  sigv4auth/traces:
+    region: ap-south-1
+    service: xray
+
+processors:
+  memory_limiter:
+    check_interval: 5s
+    limit_mib: 4000
+    spike_limit_mib: 500
+
+service:
+  telemetry:
+
+  extensions:
+    - sigv4auth/logs
+    - sigv4auth/traces
+
+  pipelines:
+    traces:
+      receivers:
+        - otlp
+      exporters:
+        - awsxray
+
+    metrics:
+      receivers:
+        - otlp
+        - postgresql
+      exporters:
+        - awsemf
+
+    logs:
+      receivers:
+        - otlp
+      exporters:
+        - awscloudwatchlogs

@@ -12,6 +12,7 @@ updates:
     directories:
       - "/"
       - "/nginx"
+      - "/otelcol"
     schedule:
       interval: weekly
       timezone: Asia/Kolkata

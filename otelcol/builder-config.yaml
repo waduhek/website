@@ -1,0 +1,38 @@
+dist:
+  name: website-otelcol
+  description: OTel collector for collecting signals from the the application service and DB instances and exporting them to AWS.
+  output_path: ./build
+  version: 0.1.0
+
+receivers:
+  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.138.0
+  - gomod:
+      github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver v0.138.0
+
+processors:
+  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.138.0
+  - gomod:
+      go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.138.0
+
+exporters:
+  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.138.0
+  - gomod: go.opentelemetry.io/collector/exporter/debugexporter v0.138.0
+  - gomod:
+      github.com/open-telemetry/opentelemetry-collector-contrib/exporter/awsxrayexporter v0.138.0
+  - gomod:
+      github.com/open-telemetry/opentelemetry-collector-contrib/exporter/awsemfexporter v0.138.0
+  - gomod:
+      github.com/open-telemetry/opentelemetry-collector-contrib/exporter/awscloudwatchlogsexporter v0.138.0
+
+providers:
+  - gomod: go.opentelemetry.io/collector/confmap/provider/envprovider v1.44.0
+  - gomod: go.opentelemetry.io/collector/confmap/provider/fileprovider v1.44.0
+  - gomod: go.opentelemetry.io/collector/confmap/provider/httpprovider v1.44.0
+  - gomod: go.opentelemetry.io/collector/confmap/provider/httpsprovider v1.44.0
+  - gomod: go.opentelemetry.io/collector/confmap/provider/yamlprovider v1.44.0
+
+extensions:
+  - gomod:
+      github.com/open-telemetry/opentelemetry-collector-contrib/extension/sigv4authextension v0.138.0
+  - gomod:
+      github.com/open-telemetry/opentelemetry-collector-contrib/extension/awsproxy v0.138.0
