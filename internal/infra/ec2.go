@@ -2,6 +2,7 @@ package infra
 
 import (
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/ec2"
+	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
 )
 
@@ -10,13 +11,14 @@ func CreateEC2Instance(
 	ctx *pulumi.Context,
 	subnet *ec2.Subnet,
 	sg *ec2.SecurityGroup,
+	instProfile *iam.InstanceProfile,
 ) (*ec2.Instance, error) {
 	ec2KeyPair, err := createKeyPair(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return createInstance(ctx, subnet, sg, ec2KeyPair)
+	return createInstance(ctx, subnet, sg, ec2KeyPair, instProfile)
 }
 
 func createKeyPair(ctx *pulumi.Context) (*ec2.KeyPair, error) {
@@ -35,6 +37,7 @@ func createInstance(
 	subnet *ec2.Subnet,
 	sg *ec2.SecurityGroup,
 	keyPair *ec2.KeyPair,
+	instProf *iam.InstanceProfile,
 ) (*ec2.Instance, error) {
 	return ec2.NewInstance(
 		ctx,
@@ -57,7 +60,8 @@ sudo systemctl enable docker
 sudo usermod -aG docker $USER
 newgrp docker
 				`),
-			KeyName: keyPair.KeyName,
+			KeyName:            keyPair.KeyName,
+			IamInstanceProfile: instProf.Name,
 		},
 	)
 }
