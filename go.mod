@@ -8,7 +8,7 @@ require (
 	github.com/jackc/pgx/v5 v5.7.6
 	github.com/pashagolub/pgxmock/v4 v4.9.0
 	github.com/pulumi/pulumi-aws/sdk/v6 v6.83.1
-	github.com/pulumi/pulumi/sdk/v3 v3.205.0
+	github.com/pulumi/pulumi/sdk/v3 v3.206.0
 	go.opentelemetry.io/contrib/bridges/otelslog v0.13.0
 	go.opentelemetry.io/otel v1.38.0
 	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.14.0
