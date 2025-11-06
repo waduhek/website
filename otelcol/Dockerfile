@@ -7,7 +7,7 @@ RUN apk --update add ca-certificates
 #
 # Builder
 #
-FROM golang:1.25.3 AS build-stage
+FROM golang:1.25.4 AS build-stage
 WORKDIR /build
 
 COPY ./builder-config.yaml builder-config.yaml
