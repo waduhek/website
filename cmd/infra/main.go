@@ -18,10 +18,23 @@ func main() {
 			return err
 		}
 
+		logGroup, err := infra.CreateLogGroup(ctx)
+		if err != nil {
+			return err
+		}
+
+		ec2InstProfile, err := infra.CreateWebsiteEC2InstanceProfile(
+			ctx, logGroup,
+		)
+		if err != nil {
+			return err
+		}
+
 		websiteInstance, err := infra.CreateEC2Instance(
 			ctx,
 			websitePublicSubnet,
 			websiteSG,
+			ec2InstProfile,
 		)
 		if err != nil {
 			return err
