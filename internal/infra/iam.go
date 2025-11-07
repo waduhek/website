@@ -12,14 +12,49 @@ func CreateWebsiteEC2InstanceProfile(
 	ctx *pulumi.Context,
 	logGroup *cloudwatch.LogGroup,
 ) (*iam.InstanceProfile, error) {
-	policyDocOutput := createIAMPolicyDoc(ctx, logGroup)
+	assumeRolePolicy, err := createAssumeRolePolicy(ctx)
+	if err != nil {
+		return nil, err
+	}
 
-	role, err := createIAMRole(ctx, policyDocOutput)
+	inlinePolicy := createIAMPolicyDoc(ctx, logGroup)
+
+	role, err := createIAMRole(ctx, assumeRolePolicy, inlinePolicy)
 	if err != nil {
 		return nil, err
 	}
 
 	return createInstanceProfile(ctx, role)
+}
+
+func createAssumeRolePolicy(ctx *pulumi.Context) (string, error) {
+	doc, err := iam.GetPolicyDocument(
+		ctx,
+		&iam.GetPolicyDocumentArgs{
+			Statements: []iam.GetPolicyDocumentStatement{
+				{
+					Effect: pulumi.StringRef("Allow"),
+					Principals: []iam.GetPolicyDocumentStatementPrincipal{
+						{
+							Type: "Service",
+							Identifiers: []string{
+								"ec2.amazonaws.com",
+							},
+						},
+					},
+					Actions: []string{
+						"sts:AssumeRole",
+					},
+				},
+			},
+		},
+	)
+
+	if err != nil {
+		return "", err
+	}
+
+	return doc.Json, nil
 }
 
 func createIAMPolicyDoc(
@@ -69,16 +104,35 @@ func createIAMPolicyDoc(
 
 func createIAMRole(
 	ctx *pulumi.Context,
-	policyOutput pulumi.Output,
+	assumeRolePolicy string,
+	inlinePolicy pulumi.Output,
 ) (*iam.Role, error) {
-	return iam.NewRole(
+	role, err := iam.NewRole(
 		ctx,
 		"website-ec2-role",
 		&iam.RoleArgs{
 			Description:      pulumi.String("Website instance role"),
-			AssumeRolePolicy: policyOutput,
+			AssumeRolePolicy: pulumi.String(assumeRolePolicy),
 		},
 	)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = iam.NewRolePolicy(
+		ctx,
+		"website-role-policy",
+		&iam.RolePolicyArgs{
+			Name:   pulumi.String("website-role-policy"),
+			Role:   role.ID(),
+			Policy: inlinePolicy,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return role, err
 }
 
 func createInstanceProfile(
