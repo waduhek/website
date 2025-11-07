@@ -24,12 +24,12 @@ exporters:
   awsemf:
     region: ap-south-1
     log_group_name: website-logs
-    log_stream_name: website-log-stream
+    log_stream_name: website-logs-stream
 
   awscloudwatchlogs:
     region: ap-south-1
     log_group_name: website-logs
-    log_stream_name: website-log-stream
+    log_stream_name: website-logs-stream
 
 extensions:
   sigv4auth/logs:
