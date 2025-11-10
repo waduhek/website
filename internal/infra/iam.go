@@ -1,6 +1,8 @@
 package infra
 
 import (
+	"fmt"
+
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/cloudwatch"
 	"github.com/pulumi/pulumi-aws/sdk/v6/go/aws/iam"
 	"github.com/pulumi/pulumi/sdk/v3/go/pulumi"
@@ -74,7 +76,7 @@ func createIAMPolicyDoc(
 							"logs:DescribeLogStreams",
 						},
 						Resources: []string{
-							arn,
+							fmt.Sprintf("%s:*:*", arn),
 						},
 					},
 					{
