@@ -31,6 +31,15 @@ func main() {
 
 	dependencies := internal.BuildDependencies(internal.TemplateNameFileMap)
 
+	metricsCollector, err := telemetry.NewTelemetryCollector(dependencies.Meter)
+	if err != nil {
+		slog.Error(
+			"error while initialising global metrics collector",
+			"error", err,
+		)
+		os.Exit(1)
+	}
+
 	mux := http.NewServeMux()
 
 	mux.Handle(
@@ -62,7 +71,7 @@ func main() {
 
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: mux,
+		Handler: metricsCollector.CollectDefaultMetricsMiddleware(mux),
 	}
 
 	go server.ListenAndServe()
