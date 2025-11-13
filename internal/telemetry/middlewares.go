@@ -96,7 +96,7 @@ func (c *TelemetryCollector) CollectDefaultMetricsMiddleware(
 
 		requestDuration := time.Since(start).Seconds()
 
-		c.activeRequestsMeter.Add(ctx, -1, method, scheme)
+		c.activeRequestsMeter.Add(ctx, -1, method, scheme, routeAttribute)
 		c.requestDurationMeter.Record(
 			ctx, requestDuration, method, scheme,
 			routeAttribute,
