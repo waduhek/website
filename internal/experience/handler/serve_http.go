@@ -6,7 +6,11 @@ import (
 	"net/http"
 	"strings"
 
+	"go.opentelemetry.io/otel/codes"
+	semconv "go.opentelemetry.io/otel/semconv/v1.37.0"
+
 	"github.com/waduhek/website/internal/experience/models"
+	"github.com/waduhek/website/internal/telemetry"
 	"github.com/waduhek/website/internal/templates"
 )
 
@@ -22,8 +26,25 @@ type pageData struct {
 }
 
 func (h *ExperienceHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	data, err := h.getAndMapExperiencesToPageData(r.Context())
+	ctx := telemetry.ExtractContext(r.Context(), r.Header)
+
+	spanCtx, span := telemetry.NewSpan(ctx, "GET /experiences")
+	defer span.End()
+
+	span.SetAttributes(
+		semconv.HTTPRequestMethodGet,
+		semconv.URLPath(r.URL.Path),
+		semconv.URLScheme(r.URL.Scheme),
+	)
+
+	data, err := h.getAndMapExperiencesToPageData(spanCtx)
 	if err != nil {
+		span.SetStatus(codes.Error, "error while getting and mapping experience")
+		span.SetAttributes(
+			semconv.ErrorType(err),
+			semconv.HTTPResponseStatusCode(500),
+		)
+
 		w.WriteHeader(500)
 		fmt.Fprint(w, "oops an error occurred")
 
@@ -32,7 +53,13 @@ func (h *ExperienceHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	template := h.templateService.GetTemplate(templates.Experience)
 	if template == nil {
-		h.logger.Error("did not get the template for experience page")
+		h.logger.ErrorContext(
+			spanCtx,
+			"did not get the template for experience page",
+		)
+
+		span.SetStatus(codes.Error, "did not get template for experience page")
+		span.SetAttributes(semconv.HTTPResponseStatusCode(500))
 
 		w.WriteHeader(500)
 		fmt.Fprint(w, "oops an error occurred")
@@ -42,13 +69,26 @@ func (h *ExperienceHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	err = template.Execute(w, data)
 	if err != nil {
-		h.logger.Error("error while executing template", "err", err)
+		h.logger.ErrorContext(
+			spanCtx,
+			"error while executing template",
+			"err", err,
+		)
+
+		span.SetStatus(codes.Error, "error while executing experience template")
+		span.SetAttributes(
+			semconv.ErrorType(err),
+			semconv.HTTPResponseStatusCode(500),
+		)
 
 		w.WriteHeader(500)
 		fmt.Fprint(w, "oops an error occurred")
 
 		return
 	}
+
+	span.SetStatus(codes.Ok, "experience page template executed")
+	span.SetAttributes(semconv.HTTPResponseStatusCode(200))
 }
 
 func (h *ExperienceHandler) getExperiences(
