@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"net/http"
 
+	"go.opentelemetry.io/otel/codes"
+	semconv "go.opentelemetry.io/otel/semconv/v1.37.0"
+
 	"github.com/waduhek/website/internal/education/models"
+	"github.com/waduhek/website/internal/telemetry"
 	"github.com/waduhek/website/internal/templates"
 )
 
@@ -20,10 +24,25 @@ type pageData struct {
 }
 
 func (h *EducationHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
+	ctx := telemetry.ExtractContext(r.Context(), r.Header)
 
-	educations, err := h.getAndMapEducations(ctx)
+	spanCtx, span := telemetry.NewSpan(ctx, "GET /education")
+	defer span.End()
+
+	span.SetAttributes(
+		semconv.HTTPRequestMethodGet,
+		semconv.URLPath(r.URL.Path),
+		semconv.URLScheme(r.URL.Scheme),
+	)
+
+	educations, err := h.getAndMapEducations(spanCtx)
 	if err != nil {
+		span.SetStatus(codes.Error, "error while getting and mapping education")
+		span.SetAttributes(
+			semconv.ErrorType(err),
+			semconv.HTTPResponseStatusCode(500),
+		)
+
 		w.WriteHeader(500)
 		fmt.Fprint(w, "oops an error occurred")
 
@@ -32,7 +51,13 @@ func (h *EducationHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	template := h.templateService.GetTemplate(templates.Education)
 	if template == nil {
-		h.logger.ErrorContext(ctx, "could not get education section template")
+		h.logger.ErrorContext(
+			spanCtx,
+			"could not get education section template",
+		)
+
+		span.SetStatus(codes.Error, "did not get template for education page")
+		span.SetAttributes(semconv.HTTPResponseStatusCode(500))
 
 		w.WriteHeader(500)
 		fmt.Fprint(w, "oops an error occurred")
@@ -43,14 +68,25 @@ func (h *EducationHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	err = template.Execute(w, educations)
 	if err != nil {
 		h.logger.ErrorContext(
-			ctx,
+			spanCtx,
 			"error while executing education template",
 			"err", err,
 		)
 
+		span.SetStatus(codes.Error, "error while executing education template")
+		span.SetAttributes(
+			semconv.ErrorType(err),
+			semconv.HTTPResponseStatusCode(500),
+		)
+
 		w.WriteHeader(500)
 		fmt.Fprint(w, "oops an error occurred")
+
+		return
 	}
+
+	span.SetStatus(200, "education template executed")
+	span.SetAttributes(semconv.HTTPResponseStatusCode(200))
 }
 
 func (h *EducationHandler) getAllEducations(
