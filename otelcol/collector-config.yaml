@@ -24,7 +24,7 @@ exporters:
   awsemf:
     region: ap-south-1
     log_group_name: website-logs
-    log_stream_name: website-logs-stream
+    log_stream_name: website-metrics-stream
     namespace: Website
 
   awscloudwatchlogs:
