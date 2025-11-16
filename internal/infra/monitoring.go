@@ -11,7 +11,8 @@ func CreateLogGroup(ctx *pulumi.Context) (*cloudwatch.LogGroup, error) {
 		ctx,
 		"website-logs",
 		&cloudwatch.LogGroupArgs{
-			Name: pulumi.String("website-logs"),
+			Name:            pulumi.String("website-logs"),
+			RetentionInDays: pulumi.IntPtr(7),
 		},
 	)
 	if err != nil {
@@ -29,6 +30,15 @@ func CreateLogGroup(ctx *pulumi.Context) (*cloudwatch.LogGroup, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	_, err = cloudwatch.NewLogStream(
+		ctx,
+		"website-metrics-stream",
+		&cloudwatch.LogStreamArgs{
+			Name:         pulumi.String("website-metrics-stream"),
+			LogGroupName: logGroup.Name,
+		},
+	)
 
 	return logGroup, nil
 }
