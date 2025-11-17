@@ -6,15 +6,6 @@ receivers:
       http:
         endpoint: 0.0.0.0:4318
 
-  postgresql:
-    username: ${env:OTELCOL_POSTGRES_USERNAME}
-    password: ${env:OTELCOL_POSTGRES_PASSWORD}
-    endpoint: ${env:OTELCOL_POSTGRES_ENDPOINT}
-    databases:
-      - website
-    tls:
-      insecure: true
-
 exporters:
   awsxray:
     region: ap-south-1
@@ -64,7 +55,6 @@ service:
     metrics:
       receivers:
         - otlp
-        - postgresql
       exporters:
         - awsemf
 
