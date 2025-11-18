@@ -11,7 +11,6 @@ import (
 )
 
 type TelemetryCollector struct {
-	activeRequestsMeter  httpconv.ServerActiveRequests
 	requestDurationMeter httpconv.ServerRequestDuration
 }
 
@@ -19,11 +18,6 @@ type TelemetryCollector struct {
 func NewTelemetryCollector(
 	meter metric.Meter,
 ) (*TelemetryCollector, error) {
-	activeRequestsMeter, err := httpconv.NewServerActiveRequests(meter)
-	if err != nil {
-		return nil, err
-	}
-
 	requestDurationMeter, err := httpconv.NewServerRequestDuration(meter)
 	if err != nil {
 		return nil, err
@@ -37,42 +31,7 @@ func NewTelemetryCollector(
 		return nil, err
 	}
 
-	err = internal.RegisterMemoryLimitMetric(meter)
-	if err != nil {
-		return nil, err
-	}
-
-	err = internal.RegisterMemoryAllocatedMetric(meter)
-	if err != nil {
-		return nil, err
-	}
-
-	err = internal.RegisterMemoryAllocationsMetric(meter)
-	if err != nil {
-		return nil, err
-	}
-
-	err = internal.RegisterGCGoalMetric(meter)
-	if err != nil {
-		return nil, err
-	}
-
-	err = internal.RegisterGoRoutineCountMetric(meter)
-	if err != nil {
-		return nil, err
-	}
-
-	err = internal.RegisterProcessorLimitMetric(meter)
-	if err != nil {
-		return nil, err
-	}
-
-	err = internal.RegisterGoGCConfigMetric(meter)
-	if err != nil {
-		return nil, err
-	}
-
-	return &TelemetryCollector{activeRequestsMeter, requestDurationMeter}, nil
+	return &TelemetryCollector{requestDurationMeter}, nil
 }
 
 // CollectDefaultMetricsMiddleware is a middleware function that collects all
@@ -87,8 +46,6 @@ func (c *TelemetryCollector) CollectDefaultMetricsMiddleware(
 		route := r.URL.Path
 		routeAttribute := semconv.HTTPRoute(route)
 
-		c.activeRequestsMeter.Add(ctx, 1, method, scheme, routeAttribute)
-
 		start := time.Now()
 
 		// Perform the request.
@@ -96,7 +53,6 @@ func (c *TelemetryCollector) CollectDefaultMetricsMiddleware(
 
 		requestDuration := time.Since(start).Seconds()
 
-		c.activeRequestsMeter.Add(ctx, -1, method, scheme, routeAttribute)
 		c.requestDurationMeter.Record(
 			ctx, requestDuration, method, scheme,
 			routeAttribute,
