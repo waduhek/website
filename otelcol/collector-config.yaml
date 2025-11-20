@@ -38,6 +38,13 @@ processors:
     limit_mib: 4000
     spike_limit_mib: 500
 
+  batch:
+    timeout: 30s
+
+  probabilistic_sampler:
+    sampling_percentage: 10
+    mode: proportional
+
 service:
   telemetry:
 
@@ -49,17 +56,27 @@ service:
     traces:
       receivers:
         - otlp
+      processors:
+        - memory_limiter
+        - probabilistic_sampler
+        - batch
       exporters:
         - awsxray
 
     metrics:
       receivers:
         - otlp
+      processors:
+        - memory_limiter
+        - batch
       exporters:
         - awsemf
 
     logs:
       receivers:
         - otlp
+      processors:
+        - memory_limiter
+        - batch
       exporters:
         - awscloudwatchlogs
