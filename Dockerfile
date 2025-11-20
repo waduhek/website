@@ -1,11 +1,11 @@
 FROM golang:1.25.4 AS builder
 WORKDIR /app
 COPY . .
-RUN make build
+RUN --mount=type=cache,target=/root/.cache/gobuild \
+    CGO_ENABLED=0 go build -a -ldflags '-extldflags "-static"' -o ./build/website ./cmd/website
 
-FROM golang:1.25.4 AS runner
-WORKDIR /app
+FROM scratch AS runner
 COPY --from=builder /app/templates ./templates
 COPY --from=builder /app/static ./static
 COPY --from=builder /app/build/website .
-CMD ["/app/website"]
+ENTRYPOINT ["/website"]
