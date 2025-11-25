@@ -2,13 +2,8 @@ html {
     font-family: sans-serif;
 }
 
-.header-list {
+.header {
     border-bottom: 2px solid black;
-    list-style-type: none;
-    display: flex;
-    justify-content: space-between;
-    padding: 0;
-    margin: 0;
 }
 
 .no-gaps {
@@ -27,6 +22,13 @@ a.unstyle {
     max-width: 920px;
 }
 
+@media (width < 920px) {
+    .container {
+        margin: auto;
+        width: 100%;
+    }
+}
+
 .nav-list {
     list-style-type: none;
     padding-left: 0;
@@ -36,7 +38,10 @@ a.unstyle {
     display: inline-block;
     padding: 5px;
     background: #e0e0e0;
-    border: 5px rounded;
+}
+
+footer {
+    font-size: small;
 }
 
 footer ul {
