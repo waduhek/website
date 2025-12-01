@@ -15,12 +15,13 @@
 
             {{range .}}
                 <div class="section">
-                    <ul class="education">
+                    <ul class="education flex">
                         <li><b>{{.Institute}}</b></li>
                         <li><i>{{.Location}}</i></li>
                     </ul>
                     <ul class="education">
-                        <li>{{.Degree}} in {{.Major}}</li>
+                        <li><b>Degree</b>: {{.Degree}}</li>
+                        <li><b>Major</b>: {{.Major}}<li>
                         <li><i>{{.Start}} - {{.End}}</i></li>
                     </ul>
                     <p>{{.Grade}}</p>

@@ -1,11 +1,19 @@
 h2 {
     margin: 0;
 }
+
 h3 {
     margin: 0;
     font-weight: normal;
 }
+
 h4 {
     margin: 0;
     font-weight: normal;
+}
+
+@media (width <= 576px) {
+    .section ul {
+        padding-left: 1em;
+    }
 }
