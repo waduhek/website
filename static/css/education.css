@@ -1,7 +1,16 @@
 .education {
-    display: flex;
     list-style-type: none;
-    justify-content: space-between;
     margin: 0;
     padding: 0;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+@media (width < 769px) {
+    .flex {
+        flex-direction: column;
+    }
 }
