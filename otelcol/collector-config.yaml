@@ -39,7 +39,7 @@ processors:
     spike_limit_mib: 500
 
   batch:
-    timeout: 30s
+    timeout: 60s
 
   probabilistic_sampler:
     sampling_percentage: 10
