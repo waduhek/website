@@ -181,11 +181,17 @@ func getOTLPEndpoint() (string, error) {
 }
 
 func newResource() (*resource.Resource, error) {
+	deploymentEnv := os.Getenv("DEPLOYMENT_ENVIRONMENT")
+	if deploymentEnv == "" {
+		deploymentEnv = "local"
+	}
+
 	return resource.Merge(
 		resource.Default(),
 		resource.NewWithAttributes(
 			semconv.SchemaURL,
-			semconv.ServiceNameKey.String("website-backend"),
+			semconv.ServiceName("website-backend"),
+			semconv.DeploymentEnvironmentName(deploymentEnv),
 		),
 	)
 }
