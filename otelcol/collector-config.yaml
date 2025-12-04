@@ -7,50 +7,90 @@ receivers:
         endpoint: 0.0.0.0:4318
 
 exporters:
-  awsxray:
-    region: ap-south-1
-    aws_log_groups:
-      - website-logs
-
-  awsemf:
-    region: ap-south-1
-    log_group_name: website-logs
-    log_stream_name: website-metrics-stream
-    namespace: Website
-
-  awscloudwatchlogs:
-    region: ap-south-1
-    log_group_name: website-logs
-    log_stream_name: website-logs-stream
+  otlphttp:
+    endpoint: https://otlp-gateway-prod-ap-south-1.grafana.net/otlp
+    auth:
+      authenticator: basicauth
 
 extensions:
-  sigv4auth/logs:
-    region: ap-south-1
-    service: logs
-
-  sigv4auth/traces:
-    region: ap-south-1
-    service: xray
+  basicauth:
+    client_auth:
+      username: ${env:OTELCOL_AUTH_USERNAME}
+      password: ${env:OTELCOL_AUTH_PASSWORD}
 
 processors:
   memory_limiter:
-    check_interval: 5s
-    limit_mib: 4000
-    spike_limit_mib: 500
+    check_interval: 1s
+    limit_mib: 800
+    spike_limit_mib: 300
 
   batch:
     timeout: 60s
 
-  probabilistic_sampler:
-    sampling_percentage: 10
-    mode: proportional
+  resourcedetection:
+    detectors:
+      - env
+      - docker
+      - ec2
+
+  transform/drop_unneeded_resource_attributes:
+    error_mode: ignore
+    trace_statements:
+      - context: resource
+        statements:
+          - delete_key(attributes, "k8s.pod.start_time")
+          - delete_key(attributes, "os.description")
+          - delete_key(attributes, "os.type")
+          - delete_key(attributes, "process.command_args")
+          - delete_key(attributes, "process.executable.path")
+          - delete_key(attributes, "process.pid")
+          - delete_key(attributes, "process.runtime.description")
+          - delete_key(attributes, "process.runtime.name")
+          - delete_key(attributes, "process.runtime.version")
+    metric_statements:
+      - context: resource
+        statements:
+          - delete_key(attributes, "k8s.pod.start_time")
+          - delete_key(attributes, "os.description")
+          - delete_key(attributes, "os.type")
+          - delete_key(attributes, "process.command_args")
+          - delete_key(attributes, "process.executable.path")
+          - delete_key(attributes, "process.pid")
+          - delete_key(attributes, "process.runtime.description")
+          - delete_key(attributes, "process.runtime.name")
+          - delete_key(attributes, "process.runtime.version")
+    log_statements:
+      - context: resource
+        statements:
+          - delete_key(attributes, "k8s.pod.start_time")
+          - delete_key(attributes, "os.description")
+          - delete_key(attributes, "os.type")
+          - delete_key(attributes, "process.command_args")
+          - delete_key(attributes, "process.executable.path")
+          - delete_key(attributes, "process.pid")
+          - delete_key(attributes, "process.runtime.description")
+          - delete_key(attributes, "process.runtime.name")
+          - delete_key(attributes, "process.runtime.version")
+
+  transform/add_resource_attributes_as_metric_attributes:
+    error_mode: ignore
+    metric_statements:
+      - context: datapoint
+        statements:
+          - set(attributes["deployment.environment.name"], resource.attributes["deployment.environment.name"])
+          - set(attributes["service.version"], resource.attributes["service.version"])
+
+connectors:
+  grafanacloud:
+    host_identifiers:
+      - host.name
+    metrics_flush_interval: 60s
 
 service:
   telemetry:
 
   extensions:
-    - sigv4auth/logs
-    - sigv4auth/traces
+    - basicauth
 
   pipelines:
     traces:
@@ -58,25 +98,40 @@ service:
         - otlp
       processors:
         - memory_limiter
-        - probabilistic_sampler
+        - resourcedetection
+        - transform/drop_unneeded_resource_attributes
         - batch
       exporters:
-        - awsxray
+        - otlphttp
+        - grafanacloud
 
     metrics:
       receivers:
         - otlp
       processors:
         - memory_limiter
+        - resourcedetection
+        - transform/drop_unneeded_resource_attributes
+        - transform/add_resource_attributes_as_metric_attributes
         - batch
       exporters:
-        - awsemf
+        - otlphttp
+
+    metrics/grafanacloud:
+      receivers:
+        - grafanacloud
+      processors:
+        - batch
+      exporters:
+        - otlphttp
 
     logs:
       receivers:
         - otlp
       processors:
         - memory_limiter
+        - resourcedetection
+        - transform/drop_unneeded_resource_attributes
         - batch
       exporters:
-        - awscloudwatchlogs
+        - otlphttp
