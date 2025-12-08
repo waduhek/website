@@ -1,7 +1,7 @@
 #
 # SSL certificates
 #
-FROM alpine:3.22 AS certs
+FROM alpine:3.23 AS certs
 RUN apk --update add ca-certificates
 
 #
