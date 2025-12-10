@@ -44,34 +44,50 @@ func main() {
 
 	mux.Handle(
 		"GET /static/css/",
-		http.StripPrefix(
-			"/static/css/",
-			http.FileServer(http.Dir("static/css")),
+		metricsCollector.CollectDefaultMetricsMiddleware(
+			http.StripPrefix(
+				"/static/css/",
+				http.FileServer(http.Dir("static/css")),
+			),
 		),
 	)
 	mux.Handle(
 		"GET /static/js/",
-		http.StripPrefix(
-			"/static/js/",
-			http.FileServer(http.Dir("static/js")),
+		metricsCollector.CollectDefaultMetricsMiddleware(
+			http.StripPrefix(
+				"/static/js/",
+				http.FileServer(http.Dir("static/js")),
+			),
 		),
 	)
 
 	expHandler := expHandler.NewExperienceHandler(dependencies)
-	mux.Handle("GET /experience", expHandler)
+	mux.Handle(
+		"GET /experience",
+		metricsCollector.CollectDefaultMetricsMiddleware(expHandler),
+	)
 
 	eduHandler := eduHandler.NewEducationHandler(dependencies)
-	mux.Handle("GET /education", eduHandler)
+	mux.Handle(
+		"GET /education",
+		metricsCollector.CollectDefaultMetricsMiddleware(eduHandler),
+	)
 
 	projHandler := projHandler.NewProjectsHandler(dependencies)
-	mux.Handle("GET /projects", projHandler)
+	mux.Handle(
+		"GET /projects",
+		metricsCollector.CollectDefaultMetricsMiddleware(projHandler),
+	)
 
 	homeHandler := homeHandler.NewHomeHandler(dependencies)
-	mux.Handle("GET /{$}", homeHandler)
+	mux.Handle(
+		"GET /{$}",
+		metricsCollector.CollectDefaultMetricsMiddleware(homeHandler),
+	)
 
 	server := &http.Server{
 		Addr:    ":8080",
-		Handler: metricsCollector.CollectDefaultMetricsMiddleware(mux),
+		Handler: mux,
 	}
 
 	go server.ListenAndServe()
