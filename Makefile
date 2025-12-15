@@ -50,7 +50,7 @@ run-docker:
 
 .PHONY: build-nginx
 build-nginx:
-	docker build --build-arg NGINX_VERSION=1.29.3 --tag website/nginx:latest ./nginx
+	docker build --build-arg NGINX_VERSION=1.29.4 --tag website/nginx:latest ./nginx
 
 .PHONY: run-nginx
 run-nginx:
