@@ -13,7 +13,7 @@ WORKDIR /build
 COPY ./builder-config.yaml builder-config.yaml
 
 RUN --mount=type=cache,target=/root/.cache/go-build \
-    GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.141.0
+    GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.142.0
 RUN --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=0 builder --ldflags="-w -s" --config builder-config.yaml
 
