@@ -80,6 +80,14 @@ processors:
           - set(attributes["deployment.environment.name"], resource.attributes["deployment.environment.name"])
           - set(attributes["service.version"], resource.attributes["service.version"])
 
+  filter:
+    error_mode: ignore
+    metrics:
+      datapoint:
+        # Filter out http.server.request.duration data points that are not GET
+        # method type.
+        - metric.name == "http.server.request.duration" and resource.attributes["http.request.method"] != "GET"
+
 connectors:
   grafanacloud:
     host_identifiers:
@@ -110,6 +118,7 @@ service:
         - otlp
       processors:
         - memory_limiter
+        - filter
         - resourcedetection
         - transform/drop_unneeded_resource_attributes
         - transform/add_resource_attributes_as_metric_attributes
