@@ -15,6 +15,8 @@ processors:
       github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.141.0
   - gomod:
       github.com/open-telemetry/opentelemetry-collector-contrib/processor/transformprocessor v0.141.0
+  - gomod:
+      github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor v0.141.0
 
 exporters:
   - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.141.0
