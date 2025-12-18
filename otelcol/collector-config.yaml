@@ -30,7 +30,6 @@ processors:
   resourcedetection:
     detectors:
       - env
-      - docker
       - ec2
 
   transform/drop_unneeded_resource_attributes:
