@@ -2,7 +2,7 @@ dist:
   name: website-otelcol
   description: OTel collector for collecting signals from the the application service and DB instances and exporting them to AWS.
   output_path: ./build
-  version: 0.5.0
+  version: 0.5.1
 
 receivers:
   - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.142.0
