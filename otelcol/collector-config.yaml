@@ -85,7 +85,7 @@ processors:
       datapoint:
         # Filter out http.server.request.duration data points that are not GET
         # method type.
-        - metric.name == "http.server.request.duration" and resource.attributes["http.request.method"] != "GET"
+        - metric.name == "http.server.request.duration" and metric.attributes["http.request.method"] != "GET"
 
 connectors:
   grafanacloud:
