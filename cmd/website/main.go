@@ -44,20 +44,16 @@ func main() {
 
 	mux.Handle(
 		"GET /static/css/",
-		metricsCollector.CollectDefaultMetricsMiddleware(
-			http.StripPrefix(
-				"/static/css/",
-				http.FileServer(http.Dir("static/css")),
-			),
+		http.StripPrefix(
+			"/static/css/",
+			http.FileServer(http.Dir("static/css")),
 		),
 	)
 	mux.Handle(
 		"GET /static/js/",
-		metricsCollector.CollectDefaultMetricsMiddleware(
-			http.StripPrefix(
-				"/static/js/",
-				http.FileServer(http.Dir("static/js")),
-			),
+		http.StripPrefix(
+			"/static/js/",
+			http.FileServer(http.Dir("static/js")),
 		),
 	)
 
