@@ -6,6 +6,30 @@ receivers:
       http:
         endpoint: 0.0.0.0:4318
 
+  hostmetrics:
+    root_path: /hostfs
+    scrapers:
+      cpu:
+        metrics:
+          system.cpu.time:
+            enabled: false
+          system.cpu.utilization:
+            enabled: true
+
+      memory:
+        metrics:
+          system.memory.limit:
+            enabled: true
+
+      filesystem:
+        metrics:
+          system.filesystem.inodes.usage:
+            enabled: false
+          system.filesystem.usage:
+            enabled: false
+          system.filesystem.utilization:
+            enabled: true
+
 exporters:
   otlphttp:
     endpoint: https://otlp-gateway-prod-ap-south-1.grafana.net/otlp
@@ -115,6 +139,7 @@ service:
     metrics:
       receivers:
         - otlp
+        - hostmetrics
       processors:
         - memory_limiter
         - filter
