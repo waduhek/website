@@ -41,12 +41,12 @@ apply-infra: build-infra
 # NOTE: Intended to be used only for local development
 .PHONY: build-docker
 build-docker:
-	docker build --tag website:latest .
+	docker build --tag website/server:latest .
 
 # NOTE: Intended to be used only for local development
 .PHONY: run-docker
 run-docker:
-	docker run --env-file .env --publish 8080:8080 --rm --network website --name website-server website:latest
+	docker run --env-file .env --publish 8080:8080 --rm --network website --name website-server website/server:latest
 
 .PHONY: build-nginx
 build-nginx:
@@ -58,4 +58,4 @@ run-nginx:
 
 .PHONY: build-otelcol
 build-otelcol:
-	docker build --tag website-otelcol:latest ./otelcol
+	docker build --tag website/otelcol:latest ./otelcol
