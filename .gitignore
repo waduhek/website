@@ -6,6 +6,3 @@ build
 
 # Miscellaneous files and directories
 .DS_Store
-
-# OTel collector builder binary
-otelcol/ocb
