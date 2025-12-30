@@ -2,7 +2,7 @@
 # Builder
 #
 ARG NGINX_VERSION
-FROM nginx:${NGINX_VERSION} AS builder
+FROM --platform=$BUILDPLATFORM nginx:${NGINX_VERSION} AS builder
 RUN apt-get update && \
     apt-get install -y \
         cmake \
@@ -34,7 +34,7 @@ RUN mkdir build && \
 #
 # Runner
 #
-FROM nginx:${NGINX_VERSION} AS runner
+FROM --platform=$BUILDPLATFORM nginx:${NGINX_VERSION} AS runner
 RUN apt-get update && apt-get install -y libc-ares2
 COPY --from=builder /usr/src/nginx-otel/build/ngx_otel_module.so /etc/nginx/modules/
 COPY nginx.conf /etc/nginx/nginx.conf
