@@ -7,7 +7,7 @@ RUN apk --update add ca-certificates
 #
 # Builder
 #
-FROM --platform=$BUILDPLATFORM golang:1.25.6 AS build-stage
+FROM --platform=$BUILDPLATFORM golang:1.25.7 AS build-stage
 ARG TARGETOS
 ARG TARGETARCH
 WORKDIR /build
