@@ -74,7 +74,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           context: ./nginx
           build-args: |
-            NGINX_VERSION=1.29.4
+            NGINX_VERSION=1.29.5
           tags: |
             ghcr.io/${{ github.repository_owner }}/website/nginx:${{ steps.version.outputs.tag }}
             ghcr.io/${{ github.repository_owner }}/website/nginx:latest
