@@ -6,7 +6,7 @@ import (
 	"runtime/metrics"
 
 	"go.opentelemetry.io/otel/metric"
-	"go.opentelemetry.io/otel/semconv/v1.37.0/goconv"
+	"go.opentelemetry.io/otel/semconv/v1.39.0/goconv"
 )
 
 // RegisterMemoryUsedMetric registers the metric for getting process memory
