@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"go.opentelemetry.io/otel/codes"
-	semconv "go.opentelemetry.io/otel/semconv/v1.37.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.39.0"
 
 	"github.com/waduhek/website/internal/experience/models"
 	"github.com/waduhek/website/internal/telemetry"

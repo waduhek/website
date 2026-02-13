@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	"go.opentelemetry.io/otel/codes"
-	semconv "go.opentelemetry.io/otel/semconv/v1.37.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.39.0"
 
 	"github.com/waduhek/website/internal/projects/models"
 	"github.com/waduhek/website/internal/telemetry"
